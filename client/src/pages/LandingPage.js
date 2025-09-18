@@ -6,9 +6,11 @@ export default function LandingPage() {
   const navigate = useNavigate();
 
   const createRoom = async () => {
+    const roomName = prompt("Enter Room Name:");
+    if (!roomName) return;
     try {
       const res = await axios.post("http://localhost:5000/api/rooms", {
-        name: "Study Room",
+        name: roomName,
       });
       navigate(`/room/${res.data.code}`);
     } catch (err) {
