@@ -9,7 +9,7 @@ export default function LandingPage() {
     const roomName = prompt("Enter Room Name:");
     if (!roomName) return;
     try {
-      const res = await axios.post("http://localhost:5000/api/rooms", {
+      const res = await axios.post("https://study-room-build-a-thon.onrender.com/api/rooms", {
         name: roomName,
       });
       navigate(`/room/${res.data.code}`);
@@ -22,7 +22,7 @@ export default function LandingPage() {
     const roomId = prompt("Enter Room ID:");
     if (roomId) {
       try {
-        const res = await axios.get(`http://localhost:5000/api/rooms/${roomId}`);
+        const res = await axios.get(`https://study-room-build-a-thon.onrender.com/api/rooms/${roomId}`);
         if (res.data) navigate(`/room/${roomId}`);
       } catch (err) {
         alert("Room not found");

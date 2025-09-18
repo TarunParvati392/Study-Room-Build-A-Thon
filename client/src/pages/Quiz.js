@@ -20,7 +20,7 @@ export default function Quiz({ roomId }) {
   // Load quizzes
   const fetchQuizzes = () => {
     axios
-      .get(`http://localhost:5000/api/quizzes/${roomId}`)
+      .get(`https://study-room-build-a-thon.onrender.com/api/quizzes/${roomId}`)
       .then((res) => setQuizzes(res.data))
       .catch((err) => console.error(err));
   };
@@ -63,7 +63,7 @@ export default function Quiz({ roomId }) {
       return;
     }
     try {
-      const response = await axios.post(`http://localhost:5000/api/quizzes`, {
+      const response = await axios.post(`https://study-room-build-a-thon.onrender.com/api/quizzes`, {
         roomCode: roomId,
         title: newQuiz.title,
         questions: newQuiz.questions,

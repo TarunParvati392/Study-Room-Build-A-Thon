@@ -2,7 +2,7 @@ import { useEffect, useState, useRef } from "react";
 import { io } from "socket.io-client";
 import EmojiPicker from "emoji-picker-react";
 
-const socket = io("http://localhost:5000"); // Replace with backend URL
+const socket = io("https://study-room-build-a-thon.onrender.com"); // Replace with backend URL
 
 export default function ChatRoom({ roomId, userName }) {
   // ...existing code...

@@ -7,7 +7,7 @@ export default function ExploreRooms() {
   const navigate = useNavigate();
 
   useEffect(() => {
-    axios.get("http://localhost:5000/api/rooms")
+    axios.get("https://study-room-build-a-thon.onrender.com/api/rooms")
       .then(res => setRooms(res.data))
       .catch(() => console.log("Error fetching rooms"));
   }, []);
