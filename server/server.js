@@ -28,19 +28,76 @@ const io = new Server(server, {
 io.on("connection", (socket) => {
   console.log("User connected:", socket.id);
 
-  socket.on("join-room", (roomId) => {
+  // Join room
+  socket.on("join-room", async (roomId) => {
     socket.join(roomId);
     console.log(`User ${socket.id} joined room ${roomId}`);
+
+    // Send previous messages to this user
+    try {
+      const room = await Room.findOne({ code: roomId });
+      if (room && room.messages) {
+        socket.emit("previous-messages", room.messages);
+      }
+    } catch (err) {
+      console.error("Error fetching previous messages:", err);
+    }
   });
 
-  socket.on("send-message", ({ roomId, message }) => {
+
+  // Send message
+  socket.on("send-message", async ({ roomId, message }) => {
+    try {
+      // Save message to DB
+      const room = await Room.findOne({ code: roomId });
+      if (room) {
+        room.messages.push(message);
+        await room.save();
+      }
+    } catch (err) {
+      console.error("Error saving message:", err);
+    }
+
+    // Broadcast to room
     io.to(roomId).emit("receive-message", message);
   });
 
+  // Delete selected messages
+  socket.on("delete-messages", async ({ roomId, indices }) => {
+    try {
+      const room = await Room.findOne({ code: roomId });
+      if (room && Array.isArray(indices)) {
+        // Remove messages by indices
+        room.messages = room.messages.filter((_, i) => !indices.includes(i));
+        await room.save();
+        // Broadcast to all clients in room
+        io.to(roomId).emit("delete-messages", indices);
+      }
+    } catch (err) {
+      console.error("Error deleting messages:", err);
+    }
+  });
+
+  // Delete a single message (WhatsApp style)
+  socket.on("delete-single-message", async ({ roomId, index }) => {
+    try {
+      const room = await Room.findOne({ code: roomId });
+      if (room && typeof index === "number") {
+        room.messages = room.messages.filter((_, i) => i !== index);
+        await room.save();
+        io.to(roomId).emit("delete-single-message", index);
+      }
+    } catch (err) {
+      console.error("Error deleting single message:", err);
+    }
+  });
+
+  // Whiteboard draw event
   socket.on("draw", ({ roomId, data }) => {
     socket.to(roomId).emit("draw", data);
   });
 
+  // Disconnect
   socket.on("disconnect", () => {
     console.log("User disconnected:", socket.id);
   });
@@ -48,7 +105,6 @@ io.on("connection", (socket) => {
 
 const roomRoutes = require("./routes/roomRoutes");
 app.use("/api/rooms", roomRoutes);
-
 
 const PORT = process.env.PORT || 5000;
 server.listen(PORT, () => console.log(`Server running on port ${PORT}`));
