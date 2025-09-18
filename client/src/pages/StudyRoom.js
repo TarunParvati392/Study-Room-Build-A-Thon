@@ -1,6 +1,9 @@
 import { useState } from "react";
 import { useParams } from "react-router-dom";
-import ChatRoom from "./ChatRoom"
+import ChatRoom from "./ChatRoom";
+import Flashcards from "./FlashCards"
+import Quiz from "./Quiz";
+import Whiteboard from "./WhiteBoard";
 
 
 export default function StudyRoom() {
@@ -88,15 +91,15 @@ export default function StudyRoom() {
           )}
 
           {selectedFeature === "whiteboard" && (
-            <div className="text-white text-lg">Whiteboard coming soon...</div>
+            <Whiteboard roomId={roomId} />
           )}
 
           {selectedFeature === "flashcards" && (
-            <div className="text-white text-lg">Flashcards coming soon...</div>
+            <Flashcards roomId={roomId} />
           )}
 
           {selectedFeature === "quiz" && (
-            <div className="text-white text-lg">Quiz coming soon...</div>
+            <Quiz roomId={roomId} />
           )}
 
           {selectedFeature === "timer" && (
